@@ -8,33 +8,59 @@ class App extends Component {
   state = {
     started: false,
     finished: false,
+    score: 0,
+    startTime: null,
+    totalTime: null,
   };
 
-  onStart = () => {
+  updateScore = val => {
     this.setState({
-      started: true,
+      score: this.state.score + val,
     });
   };
 
-  onFinish = () => {
+  onStart = () => {
+    const startMoment = new Date();
+    this.setState({
+      started: true,
+      startTime: startMoment,
+    });
+  };
+
+  onFinish = time => {
     this.setState({
       finished: true,
+      totalTime: time,
     });
   };
 
   onPlayAgain = () => {
     this.setState({
       started: false,
+      finished: false,
     });
   };
   render() {
+    const totalScore =
+      parseInt((this.state.score / questions.length) * 10000) / 100;
     return (
       <View>
         {!this.state.started && <StartScreen onStart={this.onStart} />}
         {this.state.started && !this.state.finished && (
-          <QuizScreen questions={questions} />
+          <QuizScreen
+            questions={questions}
+            updateScore={this.updateScore}
+            onFinish={this.onFinish}
+            startTime={this.state.startTime}
+          />
         )}
-        {this.state.finished && <ResultScreen />}
+        {this.state.finished && (
+          <ResultScreen
+            totalScore={totalScore}
+            totalTime={this.state.totalTime}
+            onPlayAgain={this.onPlayAgain}
+          />
+        )}
       </View>
     );
   }

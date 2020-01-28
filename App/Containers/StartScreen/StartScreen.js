@@ -6,7 +6,7 @@ class StartScreen extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.header}>Welcome!</Text>
+        <Text style={styles.header}>Ready?</Text>
         <TouchableOpacity
           style={styles.button}
           onPress={() => this.props.onStart()}>

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import {View, Text, TouchableOpacity, Alert} from 'react-native';
 import {AnswerItem} from '../../Components';
 import styles from './QuizScreenStyle';
 
@@ -49,12 +49,42 @@ class QuizScreen extends Component {
     });
   };
 
-  onConfirm = () => {
+  checkResult = () => {
     const {questions} = this.props;
-    if (questions.length - 1 > this.state.currentIndex) {
-      this.setState({
-        currentIndex: this.state.currentIndex + 1,
-      });
+    const {currentIndex, confirmedItem} = this.state;
+    const correctAnswer = questions[currentIndex].correct;
+    if (typeof correctAnswer === 'boolean') {
+      return (
+        (correctAnswer && confirmedItem === 'True') ||
+        (!correctAnswer && confirmedItem === 'False')
+      );
+    } else {
+      return correctAnswer === confirmedItem;
+    }
+  };
+
+  onConfirm = () => {
+    const {confirmedItem} = this.state;
+    const {questions, updateScore, onFinish, startTime} = this.props;
+    if (confirmedItem) {
+      if (questions.length - 1 > this.state.currentIndex) {
+        if (this.checkResult()) {
+          updateScore(1);
+        }
+        this.setState({
+          currentIndex: this.state.currentIndex + 1,
+          confirmedItem: null,
+        });
+      } else {
+        const finishTime = new Date();
+        if (this.checkResult()) {
+          updateScore(1);
+        }
+        const timeInterval = parseInt((finishTime - startTime) / 1000);
+        onFinish(timeInterval);
+      }
+    } else {
+      Alert.alert('Please choose your answer');
     }
   };
   render() {
