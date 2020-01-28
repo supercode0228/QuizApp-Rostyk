@@ -35,25 +35,20 @@ class App extends Component {
     this.setState({
       isLoading: true,
     });
-    axios.get(SERVER_URL).then(
-      res => {
-        console.log('response--->>>', res.data.results);
-        const ques = res.data.results.map(item => {
-          return {
-            question: this.convertRegularString(item.question),
-            correct: item.correct_answer,
-            incorrect: item.incorrect_answers,
-          };
-        });
-        this.setState({
-          isLoading: false,
-          questions: ques,
-        });
-      },
-      err => {
-        console.log('err----->>>', err);
-      },
-    );
+    axios.get(SERVER_URL).then(res => {
+      const ques = res.data.results.map(item => {
+        return {
+          question: this.convertRegularString(item.question),
+          correct: item.correct_answer,
+          incorrect: item.incorrect_answers,
+        };
+      });
+      this.setState({
+        isLoading: false,
+        questions: ques,
+        score: 0,
+      });
+    });
   };
 
   updateScore = val => {

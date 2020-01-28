@@ -4,7 +4,7 @@ export default StyleSheet.create({
   container: {
     justifyContent: 'space-between',
     paddingTop: 80,
-    paddingBottom: 100,
+    paddingBottom: 50,
     paddingHorizontal: 20,
     height: '100%',
   },
@@ -12,7 +12,7 @@ export default StyleSheet.create({
     fontSize: 18,
   },
   ques_text: {
-    fontSize: 30,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
   },
