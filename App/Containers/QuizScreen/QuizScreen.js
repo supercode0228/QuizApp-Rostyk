@@ -1,13 +1,38 @@
 import React, {Component} from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, TouchableOpacity} from 'react-native';
+import {AnswerItem} from '../../Components';
+import styles from './QuizScreenStyle';
 
 class QuizScreen extends Component {
   state = {
-    currentIndex: 2,
-    confirmed: false,
+    currentIndex: 0,
+    confirmedItem: null,
+    answers: [],
   };
 
-  shuffle(array) {
+  componentDidMount() {
+    this.arrangeAnswers();
+  }
+
+  componentDidUpdate({}, prevStates) {
+    if (prevStates.currentIndex !== this.state.currentIndex) {
+      this.arrangeAnswers();
+    }
+  }
+
+  arrangeAnswers = () => {
+    const {questions} = this.props;
+    const {currentIndex} = this.state;
+    const shuffledQuestions = this.shuffle([
+      questions[currentIndex].correct,
+      ...questions[currentIndex].incorrect,
+    ]);
+    this.setState({
+      answers: shuffledQuestions,
+    });
+  };
+
+  shuffle = array => {
     let j, x, i;
     for (i = array.length - 1; i > 0; i--) {
       j = Math.floor(Math.random() * (i + 1));
@@ -16,47 +41,67 @@ class QuizScreen extends Component {
       array[j] = x;
     }
     return array;
-  }
+  };
+
+  onSelectAnswer = answer => {
+    this.setState({
+      confirmedItem: answer,
+    });
+  };
+
+  onConfirm = () => {
+    const {questions} = this.props;
+    if (questions.length - 1 > this.state.currentIndex) {
+      this.setState({
+        currentIndex: this.state.currentIndex + 1,
+      });
+    }
+  };
   render() {
     const {questions} = this.props;
-    const shuffledQuestions = this.shuffle([
-      questions[this.state.currentIndex].correct,
-      ...questions[this.state.currentIndex].incorrect,
-    ]);
+    const {confirmedItem, currentIndex} = this.state;
+
     return (
-      <View style={{paddingVertical: 40, paddingHorizontal: 10}}>
-        <Text style={{fontSize: 40}}>QuizScreen</Text>
-        <Text style={{fontSize: 20}}>
-          {`Question ${this.state.currentIndex + 1}`}
-        </Text>
-        <Text style={{fontSize: 20}}>
-          {questions[this.state.currentIndex].question}
-        </Text>
+      <View style={styles.container}>
         <View>
-          {shuffledQuestions.map((item, index) => {
-            if (typeof item === 'boolean') {
-              if (item) {
-                return (
-                  <Text style={{fontSize: 20}} key={index}>
-                    True
-                  </Text>
-                );
+          <Text style={styles.ques_number}>
+            {`Question ${currentIndex + 1}`}
+          </Text>
+          <Text style={styles.ques_text}>
+            {questions[currentIndex].question}
+          </Text>
+          <View>
+            {this.state.answers.map((item, index) => {
+              let labelText;
+              if (typeof item === 'boolean') {
+                if (item) {
+                  labelText = 'True';
+                } else {
+                  labelText = 'False';
+                }
               } else {
-                return (
-                  <Text style={{fontSize: 20}} key={index}>
-                    False
-                  </Text>
-                );
+                labelText = item;
               }
-            } else {
               return (
-                <Text style={{fontSize: 20}} key={index}>
-                  {item}
-                </Text>
+                <AnswerItem
+                  key={index}
+                  selected={
+                    typeof item !== 'boolean'
+                      ? item === confirmedItem
+                      : labelText === confirmedItem
+                  }
+                  label={labelText}
+                  onSelect={this.onSelectAnswer}
+                />
               );
-            }
-          })}
+            })}
+          </View>
         </View>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => this.onConfirm()}>
+          <Text style={styles.buttonText}>Confirm</Text>
+        </TouchableOpacity>
       </View>
     );
   }

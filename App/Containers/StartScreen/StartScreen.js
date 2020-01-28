@@ -1,15 +1,16 @@
 import React, {Component} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
+import styles from './StartScreenStyle';
 
 class StartScreen extends Component {
   render() {
     return (
-      <View style={{padding: 80}}>
-        <Text style={{fontSize: 20}}>Start Screen</Text>
+      <View style={styles.container}>
+        <Text style={styles.header}>Welcome!</Text>
         <TouchableOpacity
-          style={{backgroundColor: '#000'}}
+          style={styles.button}
           onPress={() => this.props.onStart()}>
-          <Text style={{fontSize: 40, color: '#fff'}}>Start Quiz</Text>
+          <Text style={styles.buttonText}>Start Quiz</Text>
         </TouchableOpacity>
       </View>
     );
