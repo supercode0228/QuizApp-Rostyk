@@ -11,6 +11,10 @@ You can find the most recent version of this guide
 
 In the project directory, you can run:
 
+### `yarn`
+
 ### `react-native run-ios`
+
+### `react-native run-android`
 
 Runs the app in the development mode().
